@@ -3,7 +3,6 @@ import { config } from "dotenv"
 config()
 
 const URI_DB = process.env.URI_DB
-console.log("uridb =>", URI_DB)
 
 const connectDb = async () => {
   try {

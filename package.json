@@ -1,10 +1,10 @@
 {
   "name": "tp-back-fabrizio-caricato",
   "version": "1.0.0",
-  "description": "",
+  "description": "tp-utn-backend-06-02-2026",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch ./src/index.js"
   },
   "repository": {
     "type": "git",
