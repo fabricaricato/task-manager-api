@@ -9,3 +9,9 @@ const PORT = process.env.PORT
 const servidor = express()
 servidor.use(express.json())
 servidor.use(cors())
+
+// CONEXIÓN Y ESCUCHA DEL PUERTO
+servidor.listen(PORT, () => {
+  connectDb()
+  console.log(`=== 👂 Escuchando en el puerto: ${PORT} 👂 ===`)
+})
