@@ -16,7 +16,7 @@ const createTask = async (req, res) => {
     const newTask = await Task.create({
       title,
       description
-      // creator: req.user.id
+      // creator: --> configurar luego con el middleware
     });
 
     return res.status(201).json({ success: true, data: newTask });
@@ -27,7 +27,7 @@ const createTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
   try {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const updates = req.body;
     const updatedTask = await Task.findByIdAndUpdate(id, updates, { new: true });
 
@@ -43,7 +43,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const { id } = req.params.id;
+    const id = req.params.id;
     const deletedTask = await Task.findByIdAndDelete(id);
 
     if (!deletedTask) {

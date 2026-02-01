@@ -10,7 +10,7 @@ const TaskSchema = new mongoose.Schema({
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId, // Guarda un ID de Mongo
-    ref: 'User',                          
+    ref: 'User',                        
     required: true
   },
   completed: {

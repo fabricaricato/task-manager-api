@@ -1,8 +1,8 @@
-import { Router } from "express";
+// import { Router } from "express";
 
-const authRouter = Router()
+// const authRouter = Router()
 
-authRouter.post("/register", )
-authRouter.post("/login",)
+// authRouter.post("/register", )
+// authRouter.post("/login",)
 
-export {authRouter}
+// export {authRouter}
