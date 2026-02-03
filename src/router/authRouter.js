@@ -1,8 +1,9 @@
-// import { Router } from "express";
+import { Router } from "express";
+import { register } from "../controllers/auth.controller.js";
 
-// const authRouter = Router()
+const authRouter = Router()
 
-// authRouter.post("/register", )
+authRouter.post("/register", register)
 // authRouter.post("/login",)
 
-// export {authRouter}
+export {authRouter}

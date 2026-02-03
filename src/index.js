@@ -2,7 +2,7 @@ import { connectDb } from "./config/mongodb.js"
 import express from "express"
 import cors from "cors"
 import { config } from "dotenv"
-// import { authRouter } from "./router/authRouter.js"
+import { authRouter } from "./router/authRouter.js"
 import { taskRouter } from "./router/taskRouter.js"
 config()
 
@@ -14,7 +14,7 @@ servidor.use(express.json())
 servidor.use(cors())
 
 // ENDPOINTS
-// servidor.use("/api/auth", authRouter)
+servidor.use("/api/auth", authRouter)
 servidor.use("/api/tasks", taskRouter)
 
 // CONEXIÓN Y ESCUCHA DEL PUERTO
