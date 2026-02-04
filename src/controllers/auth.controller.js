@@ -1,5 +1,5 @@
 import { User } from "../models/user.model.js"
-import bcrypt from "bcryptjs";
+import bcrypt, { compare } from "bcryptjs";
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 
@@ -35,4 +35,23 @@ const register = async (req, res) => {
   }
 }
 
-export {register}
+const login = async (req, res) => {
+  try {
+    const { username, email, password } = req.body
+
+    const foundUser = await User.findOne({ email })
+
+    const comparePasswords = await bcrypt.compare(password, foundUser.password)
+
+    if (!comparePasswords) {
+      return res.status(401).json({success: false, error: "no autorizado, intentelo nuevamente"})
+    }
+
+    return res.status(200).json({success: true, data: "autenticación exitosa!"})
+
+  } catch (error) {
+    return res.status(400).json({success: false, error: error.message})
+  }
+}
+
+export {register, login}
