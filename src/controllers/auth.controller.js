@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js"
 import bcrypt, { compare } from "bcryptjs";
+// import jwt from "jsonwebtoken"
 
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 

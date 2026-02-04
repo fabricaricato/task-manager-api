@@ -4,6 +4,7 @@ import cors from "cors"
 import { config } from "dotenv"
 import { authRouter } from "./router/authRouter.js"
 import { taskRouter } from "./router/taskRouter.js"
+import { validateJWT } from "./middleware/middleware.js"
 config()
 
 const PORT = process.env.PORT
@@ -14,8 +15,8 @@ servidor.use(express.json())
 servidor.use(cors())
 
 // ENDPOINTS
-servidor.use("/api/auth", authRouter)
-servidor.use("/api/tasks", taskRouter)
+servidor.use("/api/auth", validateJWT, authRouter)
+servidor.use("/api/tasks", validateJWT, taskRouter)
 
 // CONEXIÓN Y ESCUCHA DEL PUERTO
 servidor.listen(PORT, () => {
