@@ -14,10 +14,6 @@ const server = express()
 server.use(express.json())
 server.use(cors())
 
-// Endpoints
-server.use("/api/auth", authRouter)
-server.use("/api/tasks", validateJWT, taskRouter)
-
 // Ruta de bienvenida para evadir Cannot GET /
 server.get('/', (req, res) => {
   res.send(`
@@ -32,6 +28,10 @@ server.get('/', (req, res) => {
     <p>Developed by Fabrizio Caricato</p>
   `);
 });
+
+// Endpoints
+server.use("/api/auth", authRouter)
+server.use("/api/tasks", validateJWT, taskRouter)
 
 // Conexión y escucha del puerto
 server.listen(PORT, () => {
