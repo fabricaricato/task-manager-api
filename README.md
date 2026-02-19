@@ -1,112 +1,321 @@
-# 🚀 API - Gestor de Tareas Seguro
+# 🚀 Task Manager API
 
-Backend para una aplicación de gestión de tareas con autenticación de usuarios. Permite registrarse, iniciar sesión y gestionar tareas privadas (CRUD) protegidas con JWT.
+RESTful API for a secure task management application. Users can register, log in, and manage their own private tasks through a full CRUD interface, all protected with JWT authentication.
 
-## 🛠️ Tecnologías Utilizadas
-
-* **Node.js** (Entorno de ejecución)
-* **Express** (Framework web)
-* **MongoDB Atlas & Mongoose** (Base de datos)
-* **JWT (JSON Web Tokens)** (Autenticación)
-* **Bcrypt** (Encriptación de contraseñas)
+**Live Demo:** Deployed on [Vercel](https://vercel.com)
 
 ---
 
-## ⚙️ Instalación y Ejecución
+## 🛠️ Tech Stack
 
-Sigue estos pasos para correr el proyecto en tu máquina local:
-
-1.  **Clonar el repositorio:**
-    ```bash
-    git clone https://github.com/fabricaricato/tp-utn-servidor-http-fabrizio-caricato.git
-    cd tp-utn-servidor-http-fabrizio-caricato
-    ```
-
-2.  **Instalar dependencias:**
-    ```bash
-    npm install
-    ```
-
-3.  **Configurar variables de entorno:**
-    Este proyecto utiliza variables de entorno para la seguridad.
-    
-    * Busca el archivo `.env.example` que ya está en el proyecto.
-    * Crea una copia de ese archivo y renómbralo a `.env`.
-    * Abre el nuevo archivo `.env` y completa los valores con tus propios datos:
-    
-    ```env
-    URI_DB = tu_string_de_conexion_real_de_mongodb
-    PORT = 50000
-    JWT_SECRET = tu_palabra_secreta_personal
-    JWT_EXPIRES = tiempo_de_expiración_del_token
-    ```
-
-4.  **Ejecutar el servidor:**
-    ```bash
-    # Ejecutar servidor
-    npm run dev
+| Technology        | Purpose                       |
+| ----------------- | ----------------------------- |
+| **Node.js**       | Runtime environment           |
+| **Express 5**     | Web framework                 |
+| **MongoDB Atlas** | Cloud database                |
+| **Mongoose**      | ODM / Data modeling           |
+| **JWT**           | Token-based authentication    |
+| **Bcrypt.js**     | Password hashing              |
+| **CORS**          | Cross-origin resource sharing |
 
 ---
 
-## 📡 Ejemplos de Requests (Endpoints)
+## 📁 Project Structure
 
-Puedes probar la API usando **Bruno**, **Postman** o **Thunder Client**.
+```
+src/
+├── config/
+│   └── mongodb.js          # Database connection
+├── controllers/
+│   ├── auth.controller.js  # Register & login logic
+│   └── task.controller.js  # CRUD operations for tasks
+├── middleware/
+│   └── middleware.js        # JWT validation
+├── models/
+│   ├── user.model.js       # User schema (username, email, password)
+│   └── task.model.js       # Task schema (title, description, completed, creator)
+├── router/
+│   ├── authRouter.js       # Auth routes (/api/auth)
+│   └── taskRouter.js       # Task routes (/api/tasks)
+├── docs/
+│   └── peticiones-bruno/   # Ready-to-import Bruno/Postman collection
+└── index.js                # App entry point & server config
+```
 
-### 🔐 Autenticación
+---
 
-#### 1. Registrar Usuario
-* **Método:** `POST`
-* **URL:** `/api/auth/register`
-* **Body (JSON):**
-    ```json
+## ⚙️ Installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18+)
+- A [MongoDB Atlas](https://www.mongodb.com/atlas) cluster (or local MongoDB)
+
+### Setup
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/fabricaricato/task-manager-api.git
+   cd task-manager-api
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables:**
+
+   Copy the example file and fill in your values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   ```env
+   URI_DB=your_mongodb_connection_string
+   PORT=50000
+   JWT_SECRET=your_secret_key
+   JWT_EXPIRES=2h
+   ```
+
+4. **Start the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   The server will start at `http://localhost:50000` (or your configured port).
+
+---
+
+## 📡 API Endpoints
+
+### Base URL
+
+```
+http://localhost:50000/api
+```
+
+---
+
+### 🔐 Authentication — `/api/auth`
+
+#### Register a new user
+
+```
+POST /api/auth/register
+```
+
+**Request body:**
+
+```json
+{
+  "username": "JohnDoe",
+  "email": "john@example.com",
+  "password": "mypassword123"
+}
+```
+
+**Validations:**
+
+- All fields are required
+- Email must be valid and end with `.com`
+- Password must be at least 5 characters
+
+**Success response** `200`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664f...",
+    "username": "JohnDoe",
+    "email": "john@example.com",
+    "password": "$2a$10$..."
+  }
+}
+```
+
+---
+
+#### Login
+
+```
+POST /api/auth/login
+```
+
+**Request body:**
+
+```json
+{
+  "email": "john@example.com",
+  "password": "mypassword123"
+}
+```
+
+**Success response** `200`:
+
+```json
+{
+  "success": true,
+  "data": "Successfully authentication",
+  "token": "eyJhbGciOiJIUzI1NiIs..."
+}
+```
+
+> 💡 **Save the token!** You'll need it for all task endpoints.
+
+---
+
+### 📝 Tasks — `/api/tasks`
+
+> ⚠️ **All task endpoints require authentication.**
+> Include the token in the request header:
+>
+> ```
+> Authorization: your_jwt_token
+> ```
+
+#### Get all tasks
+
+```
+GET /api/tasks
+```
+
+**Success response** `200`:
+
+```json
+{
+  "success": true,
+  "data": [
     {
-      "username": "FabriDeveloper",
-      "email": "fabri@prueba.com",
-      "password": "123456password"
+      "_id": "664f...",
+      "title": "Finish backend project",
+      "description": "Complete README and deploy",
+      "creator": "664e...",
+      "completed": false
     }
-    ```
-
-#### 2. Iniciar Sesión (Login)
-* **Método:** `POST`
-* **URL:** `/api/auth/login`
-* **Body (JSON):**
-    ```json
-    {
-      "email": "fabri@prueba.com",
-      "password": "123456password"
-    }
-    ```
-* **Respuesta:** Recibirás un `token` que debes usar en las siguientes peticiones.
+  ]
+}
+```
 
 ---
 
-### 📝 Tareas (Requiere Token)
-⚠️ **Importante:** En todas estas peticiones debes incluir el Header:
-`Authorization: tu_token_jwt_aqui`
+#### Create a task
 
-#### 3. Crear Tarea
-* **Método:** `POST`
-* **URL:** `/api/tasks`
-* **Body:**
-    ```json
-    {
-      "title": "Terminar el TP de Backend",
-      "description": "Hacer el README y subir a GitHub"
-    }
-    ```
+```
+POST /api/tasks
+```
 
-#### 4. Obtener Tareas
-* **Método:** `GET`
-* **URL:** `/api/tasks`
+**Request body:**
 
-#### 5. Eliminar Tarea
-* **Método:** `DELETE`
-* **URL:** `/api/tasks/:id`
+```json
+{
+  "title": "Finish backend project",
+  "description": "Complete README and deploy"
+}
+```
+
+**Success response** `201`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664f...",
+    "title": "Finish backend project",
+    "description": "Complete README and deploy",
+    "creator": "664e...",
+    "completed": false
+  }
+}
+```
 
 ---
 
-## 🧪 Colección de Pruebas
-En la carpeta `docs/` encontrarás la carpeta `peticiones-bruno` para importar en Bruno/Postman y probar todo rápidamente.
+#### Update a task
 
-## ✒️ Autor
-* **Fabrizio Caricato** - [GitHub](https://github.com/fabricaricato)
+```
+PATCH /api/tasks/:id
+```
+
+**Request body** (any field):
+
+```json
+{
+  "completed": true
+}
+```
+
+**Success response** `200`:
+
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664f...",
+    "title": "Finish backend project",
+    "description": "Complete README and deploy",
+    "creator": "664e...",
+    "completed": true
+  }
+}
+```
+
+---
+
+#### Delete a task
+
+```
+DELETE /api/tasks/:id
+```
+
+**Success response** `200`:
+
+```json
+{
+  "success": true,
+  "data": { "...deleted task object..." }
+}
+```
+
+---
+
+## ❌ Error Responses
+
+All errors follow a consistent format:
+
+```json
+{
+  "success": false,
+  "error": "Error description message"
+}
+```
+
+| Status Code | Meaning                                        |
+| ----------- | ---------------------------------------------- |
+| `400`       | Bad request / Invalid token                    |
+| `401`       | Unauthorized / Missing token or wrong password |
+| `404`       | Task not found                                 |
+| `500`       | Internal server error                          |
+
+---
+
+## 🧪 API Testing Collection
+
+Inside `src/docs/peticiones-bruno/` you'll find a ready-to-use [Bruno](https://www.usebruno.com/) collection with all endpoints pre-configured. You can also import it into **Postman** or **Thunder Client**.
+
+---
+
+## 🌐 Deployment
+
+This project is configured for deployment on **Vercel**. The `vercel.json` file is already set up — just connect your repository to Vercel and add the environment variables in the dashboard.
+
+---
+
+## ✒️ Author
+
+**Fabrizio Caricato** — [GitHub](https://github.com/fabricaricato)
